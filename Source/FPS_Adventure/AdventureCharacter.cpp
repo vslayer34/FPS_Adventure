@@ -14,6 +14,26 @@ AAdventureCharacter::AAdventureCharacter()
 
 	FpsMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>("FirstPersonMesh");
 	check(FpsMeshComponent != nullptr);
+
+	// Attach the FirstPerson mesh to the Skeletal Mesh
+	FpsMeshComponent->SetupAttachment(GetMesh());
+
+	FpsMeshComponent->FirstPersonPrimitiveType = EFirstPersonPrimitiveType::FirstPerson;
+	GetMesh()->FirstPersonPrimitiveType = EFirstPersonPrimitiveType::WorldSpaceRepresentation;
+
+	CameraComponent->SetupAttachment(FpsMeshComponent, FName("head"));
+
+	// Position the camera slightly above the eyes and rotate it to behind the player's head
+	CameraComponent->SetRelativeLocationAndRotation(FpsCameraOffset, FRotator(0.0f, 90.0f, -90.0f));
+
+	// Enable the pawn to control camera rotation.
+	CameraComponent->bUsePawnControlRotation = true;
+
+	// Enable first-person rendering and set default FOV and scale values
+	CameraComponent->bEnableFirstPersonFieldOfView = true;
+	CameraComponent->bEnableFirstPersonScale = true;
+	CameraComponent->FirstPersonFieldOfView = FpsCameraFov;
+	CameraComponent->FirstPersonScale = FpsScale;
 }
 
 // Called when the game starts or when spawned
@@ -22,6 +42,9 @@ void AAdventureCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	check(GEngine != nullptr);
+
+	// Only the owning player sees the first-person mesh
+	FpsMeshComponent->SetOnlyOwnerSee(true);
 
 	// Get the player controller for this character
 	if (APlayerController* playerController = Cast<APlayerController>(Controller))
