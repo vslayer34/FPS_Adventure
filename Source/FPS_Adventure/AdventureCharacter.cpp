@@ -46,6 +46,9 @@ void AAdventureCharacter::BeginPlay()
 	// Only the owning player sees the first-person mesh
 	FpsMeshComponent->SetOnlyOwnerSee(true);
 
+	// Set the animations on the first person mesh.
+	FpsMeshComponent->SetAnimInstanceClass(FpsDefaultAnim->GeneratedClass);
+
 	// Get the player controller for this character
 	if (APlayerController* playerController = Cast<APlayerController>(Controller))
 	{
