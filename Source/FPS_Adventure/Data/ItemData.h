@@ -24,5 +24,6 @@ struct FItemText
 	GENERATED_BODY();
 
 	// The text name of the item.
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
+	FText Name;
 };
