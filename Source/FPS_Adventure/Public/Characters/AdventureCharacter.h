@@ -14,6 +14,7 @@ class UInputMappingContext;
 class UInputAction;
 class UInputComponent;
 class UCameraComponent;
+class UAnimBlueprint;
 
 UCLASS()
 class FPS_ADVENTURE_API AAdventureCharacter : public ACharacter
@@ -23,6 +24,9 @@ class FPS_ADVENTURE_API AAdventureCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AAdventureCharacter();
+
+	UPROPERTY(EditAnywhere, Category="Animation")
+	TObjectPtr<UAnimBlueprint> FirstPersonDefaultAnim;
 
 protected:
 	// Called when the game starts or when spawned
@@ -47,7 +51,7 @@ protected:
 
 	// Offset for the first camera component
 	UPROPERTY(EditAnywhere, Category="Camera")
-	FVector FirstPersonCameraOffset = FVector(2.8f, 5.9f, 0.0f);
+	FVector FirstPersonCameraOffset = FVector(15.0f, 12.0f, 0.0f);
 
 	// First-person primitives field of view
 	UPROPERTY(EditAnywhere, Category="Camera")

@@ -51,6 +51,10 @@ void AAdventureCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	check(GEngine != nullptr);
+	// Set the animations on the first person mesh.
+	FirstPersonMeshComponent->SetAnimInstanceClass(FirstPersonDefaultAnim->GeneratedClass);
+	// Set the animations on the third-person mesh.
+	GetMesh()->SetAnimInstanceClass(FirstPersonDefaultAnim->GeneratedClass);
 
 	// Only the owning player sees the first-person mesh. Hide the 3rd-person mesh from the owning player
 	FirstPersonMeshComponent->SetOnlyOwnerSee(true);
