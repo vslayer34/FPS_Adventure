@@ -15,7 +15,18 @@ AAdventureCharacter::AAdventureCharacter()
 void AAdventureCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	check(GEngine != nullptr);
+
+	// Get the player controller for this character
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		// Get the enhanced input local player subsystem and add a new input mapping context to it
+		if (UEnhancedInputLocalPlayerSubsystem* EnhancedInputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			EnhancedInputSubsystem->AddMappingContext(FirstPersonMappingContext, 0);
+		}
+	}
 }
 
 // Called every frame
@@ -30,5 +41,28 @@ void AAdventureCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		// Bind Movement Action
+		EnhancedInputComponent->BindAction(MoveInputAction, ETriggerEvent::Triggered, this, &AAdventureCharacter::Move);
+
+		// Bind Jump Actions
+		EnhancedInputComponent->BindAction(JumpInputAction, ETriggerEvent::Started, this, &AAdventureCharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpInputAction, ETriggerEvent::Completed, this, &AAdventureCharacter::StopJumping);
+	}
 }
 
+// Handles 2D movement input
+void AAdventureCharacter::Move(const FInputActionValue &Value)
+{
+	const FVector2D InputValue = Value.Get<FVector2D>();
+
+	if (Controller)
+	{
+		const FVector Right = GetActorRightVector();
+		const FVector Forward = GetActorForwardVector();
+
+		AddMovementInput(Right, InputValue.X);
+		AddMovementInput(Forward, InputValue.Y);
+	}
+}
