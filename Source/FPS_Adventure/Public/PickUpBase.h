@@ -8,6 +8,8 @@
 #include "GameFramework/Actor.h"
 #include "PickUpBase.generated.h"
 
+class UItemDefinition;
+
 UCLASS(BlueprintType, Blueprintable)
 class FPS_ADVENTURE_API APickUpBase : public AActor
 {
@@ -26,6 +28,9 @@ protected:
 
 	UPROPERTY(EditInstanceOnly, Category="Pickup | Item Table")
 	TSoftObjectPtr<UDataTable> PickupDataTable;
+
+	UPROPERTY(VisibleAnywhere, Category="Pickup | Item Reference")
+	TObjectPtr<UItemDefinition> ReferenceItem;
 
 public:	
 	// Called every frame

@@ -17,6 +17,7 @@ void APickUpBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	InitializePickUp();
 }
 
 // Called every frame
@@ -24,5 +25,20 @@ void APickUpBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void APickUpBase::InitializePickUp()
+{
+	if (PickupDataTable && !PickupItemID.IsNone())
+	{
+		const FItemData* ItemDataRow = PickupDataTable->FindRow<FItemData>(PickupItemID, PickupItemID.ToString());
+
+		ReferenceItem = NewObject<UItemDefinition>(this, UItemDefinition::StaticClass());
+
+		ReferenceItem->ID = ItemDataRow->ID;
+		ReferenceItem->ItemType = ItemDataRow->ItemType;
+		ReferenceItem->ItemText = ItemDataRow->ItemText;
+		ReferenceItem->WorldMesh = ItemDataRow->ItemBase->WorldMesh;
+	}
 }
 
