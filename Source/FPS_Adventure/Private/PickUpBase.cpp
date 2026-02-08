@@ -37,6 +37,7 @@ void APickUpBase::Tick(float DeltaTime)
 
 void APickUpBase::InitializePickUp()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("I'm Called"));
 	if (PickupDataTable && !PickupItemID.IsNone())
 	{
 		const FItemData* ItemDataRow = PickupDataTable->FindRow<FItemData>(PickupItemID, PickupItemID.ToString());
@@ -78,17 +79,44 @@ void APickUpBase::OnSphereBeginOverlap(UPrimitiveComponent *OverlappedComponent,
 
 	if (Character != nullptr)
 	{
+		// GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Character is here"));
+
+		FString VisibilityStatus = MeshComponent->IsVisible() ? TEXT("true") : TEXT("false");
 		// Unregister from the Overlap Event so it is no longer triggered
 		SphereComponent->OnComponentBeginOverlap.RemoveAll(this);
 
 		MeshComponent->SetVisibility(false);
+
+		VisibilityStatus = MeshComponent->IsVisible() ? TEXT("true") : TEXT("false");
+
 		MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 
 	if (bSholudRespawn)
 	{
-		GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &APickUpBase::InitializePickUp, RespawnTimer, false, 0.0f);
+		GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &APickUpBase::InitializePickUp, RespawnTimer, false);
+
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("I'm gonna respawn"));
 	}
 }
 
+void APickUpBase::PostEditChangeProperty(FPropertyChangedEvent &PropertyChangedEvent)
+{
+	// Handle parent class property changes
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	const FName ChangedPropertyName = PropertyChangedEvent.Property ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+
+	// Verify that the changed property exists in this class and that the PickupDataTable is valid.
+	if (ChangedPropertyName == GET_MEMBER_NAME_CHECKED(APickUpBase, PickupItemID) && PickupDataTable)
+	{
+		// Retrieve the associated ItemData for this pickup.
+		if (const FItemData* ItemDataRow = PickupDataTable->FindRow<FItemData>(PickupItemID, PickupItemID.ToString()))
+		{
+			UItemDefinition* TempItemDefinition = ItemDataRow->ItemBase.Get();
+			MeshComponent->SetStaticMesh(TempItemDefinition->WorldMesh.Get());
+			SphereComponent->SetSphereRadius(32.0f);
+		}
+	}
+}

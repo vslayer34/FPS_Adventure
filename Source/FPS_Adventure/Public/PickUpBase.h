@@ -38,7 +38,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Pickup | Components")
 	TObjectPtr<USphereComponent> SphereComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Piclup | Respawn")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Pickup | Respawn")
 	bool bSholudRespawn;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Pickup | Respawn")
@@ -48,6 +48,11 @@ protected:
 
 	UFUNCTION()
 	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
+
+	#if WITH_EDITOR
+		// Runs whenever a property on this object is changed in the editor
+		virtual void PostEditChangeProperty(FPropertyChangedEvent &PropertyChangedEvent) override;
+	#endif
 
 public:	
 	// Called every frame
