@@ -32,6 +32,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category="Pickup | Item Reference")
 	TObjectPtr<UItemDefinition> ReferenceItem;
 
+	UPROPERTY(VisibleDefaultsOnly, Category="Pickup | Mesh")
+	TObjectPtr<UStaticMeshComponent> MeshComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Pickup | Components")
+	TObjectPtr<USphereComponent> SphereComponent;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

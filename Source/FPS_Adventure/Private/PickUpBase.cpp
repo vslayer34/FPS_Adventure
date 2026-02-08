@@ -10,6 +10,14 @@ APickUpBase::APickUpBase()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PickupMesh"));
+	check(MeshComponent != nullptr);
+
+	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
+	check(SphereComponent != nullptr);
+
+	SphereComponent->SetupAttachment(MeshComponent);
+	SphereComponent->SetSphereRadius(32.0f);
 }
 
 // Called when the game starts or when spawned
@@ -39,6 +47,24 @@ void APickUpBase::InitializePickUp()
 		ReferenceItem->ItemType = ItemDataRow->ItemType;
 		ReferenceItem->ItemText = ItemDataRow->ItemText;
 		ReferenceItem->WorldMesh = ItemDataRow->ItemBase->WorldMesh;
+
+		UItemDefinition* TempItemDefinition = ItemDataRow->ItemBase.Get();
+
+		// Check if the mesh is currently loaded by calling IsValid().
+		if (TempItemDefinition->WorldMesh.IsValid())
+		{
+			// Set the pickup's mesh to the associated item's mesh
+			MeshComponent->SetStaticMesh(TempItemDefinition->WorldMesh.Get());
+		}
+		else
+		{
+			// If the mesh isn't loaded, load it by calling LoadSynchronous().
+			UStaticMesh* WorldMesh = TempItemDefinition->WorldMesh.LoadSynchronous();
+			MeshComponent->SetStaticMesh(WorldMesh);
+		}
+
+		MeshComponent->SetVisibility(true);
+		SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	}
 }
 
