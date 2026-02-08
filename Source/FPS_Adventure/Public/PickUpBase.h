@@ -38,6 +38,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Pickup | Components")
 	TObjectPtr<USphereComponent> SphereComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Piclup | Respawn")
+	bool bSholudRespawn;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Pickup | Respawn")
+	float RespawnTimer = 4.0f;
+
+	FTimerHandle RespawnTimerHandle;
+
+	UFUNCTION()
+	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

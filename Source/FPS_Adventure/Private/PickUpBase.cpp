@@ -65,6 +65,30 @@ void APickUpBase::InitializePickUp()
 
 		MeshComponent->SetVisibility(true);
 		SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		// Register the Overlap Event
+		SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &APickUpBase::OnSphereBeginOverlap);
+	}
+}
+
+void APickUpBase::OnSphereBeginOverlap(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Attempting a pickup collision"));
+
+	AAdventureCharacter* Character = Cast<AAdventureCharacter>(OtherActor);
+
+	if (Character != nullptr)
+	{
+		// Unregister from the Overlap Event so it is no longer triggered
+		SphereComponent->OnComponentBeginOverlap.RemoveAll(this);
+
+		MeshComponent->SetVisibility(false);
+		MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+
+	if (bSholudRespawn)
+	{
+		GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &APickUpBase::InitializePickUp, RespawnTimer, false, 0.0f);
 	}
 }
 
