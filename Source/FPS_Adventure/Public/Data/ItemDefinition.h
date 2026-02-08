@@ -27,4 +27,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Item Data")
 	TSoftObjectPtr<UStaticMesh> WorldMesh;
+
+	// Creates and returns a copy of the item.
+	virtual UItemDefinition* CreateItemCopy() const;
 };

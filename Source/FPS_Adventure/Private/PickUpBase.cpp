@@ -41,15 +41,18 @@ void APickUpBase::InitializePickUp()
 	if (PickupDataTable && !PickupItemID.IsNone())
 	{
 		const FItemData* ItemDataRow = PickupDataTable->FindRow<FItemData>(PickupItemID, PickupItemID.ToString());
+		
+		// ReferenceItem = NewObject<UItemDefinition>(this, UItemDefinition::StaticClass());
 
-		ReferenceItem = NewObject<UItemDefinition>(this, UItemDefinition::StaticClass());
-
-		ReferenceItem->ID = ItemDataRow->ID;
-		ReferenceItem->ItemType = ItemDataRow->ItemType;
-		ReferenceItem->ItemText = ItemDataRow->ItemText;
-		ReferenceItem->WorldMesh = ItemDataRow->ItemBase->WorldMesh;
+		// ReferenceItem->ID = ItemDataRow->ID;
+		// ReferenceItem->ItemType = ItemDataRow->ItemType;
+		// ReferenceItem->ItemText = ItemDataRow->ItemText;
+		// ReferenceItem->WorldMesh = ItemDataRow->ItemBase->WorldMesh;
 
 		UItemDefinition* TempItemDefinition = ItemDataRow->ItemBase.Get();
+		
+		// Create a copy of the item with the class type
+		ReferenceItem = TempItemDefinition->CreateItemCopy();
 
 		// Check if the mesh is currently loaded by calling IsValid().
 		if (TempItemDefinition->WorldMesh.IsValid())
